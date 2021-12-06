@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { extend, Object3DNode, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls as OC } from 'three-stdlib';
+import { Vector3 } from 'three';
 
 extend({ OrbitControls: OC });
 
@@ -17,7 +18,7 @@ export function OrbitControls () {
   const { camera, gl } = useThree();
   useEffect(() => {
     if (controls.current) {
-      controls.current.listenToKeyEvents(document.body);
+      controls.current.target = new Vector3(0, 7.5, 0);
     }
   }, [controls]);
   useFrame(() => {
@@ -26,7 +27,6 @@ export function OrbitControls () {
   return (
     <orbitControls
       args={[camera, gl.domElement]}
-      enableZoom
       ref={controls}/>
   );
 }
