@@ -12,12 +12,12 @@ import { useCallback, useEffect, useMemo, forwardRef, useState } from 'react';
 import { Vector3 } from 'three';
 import { useGravity, usePositionControls, useRotationControls } from '../hooks';
 
-const indexLetterMap = ['I', 'J', 'L', 'O', 'S', 'Z', 'T'];
 
 function AP (props: {
   position: Vector3,
 }, ref: any) {
   useRotationControls(ref);
+  const indexLetterMap = ['I', 'J', 'L', 'O', 'S', 'Z', 'T'];
   const tetrominos = useMemo(() => {
     const tetrominoProps = {
       position: props.position,

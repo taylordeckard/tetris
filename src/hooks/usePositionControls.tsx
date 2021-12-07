@@ -1,16 +1,11 @@
 import { MutableRefObject, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Box3, Group } from 'three';
-
-const startingXMap: { [key: string]: number } = {
-  I: 0,
-  J: 0.5,
-  L: 0.5,
-  O: 0,
-  S: 0.5,
-  T: 0.5,
-  Z: 0.5,
-};
+import {
+  BOUNDARY_MAX_X,
+  BOUNDARY_MIN_X,
+  TMINO_STARTING_X_MAP,
+} from '../constants';
 
 export function usePositionControls (
   ref: MutableRefObject<Group>,
@@ -19,16 +14,16 @@ export function usePositionControls (
 ) {
   const [xOffset, setXOffset] = useState(0);
   useEffect(() => {
-    setXOffset(startingXMap[pieceLetter]);
+    setXOffset(TMINO_STARTING_X_MAP[pieceLetter]);
   }, [pieceLetter, reset]);
   useEffect(() => {
     const arrowRightLeftHandler = (event: KeyboardEvent) => {
       const box = new Box3();
       box.setFromObject(ref.current);
-      if (event.key === 'ArrowLeft') {
+      if (event.key === 'ArrowLeft' && isInsideBoundary(box, -1)) {
         setXOffset(x => x - 1);
       }
-      if (event.key === 'ArrowRight') {
+      if (event.key === 'ArrowRight' && isInsideBoundary(box, 1)) {
         setXOffset(x => x + 1);
       }
     };
@@ -36,6 +31,10 @@ export function usePositionControls (
     return () => document.removeEventListener('keydown', arrowRightLeftHandler);
     // eslint-disable-next-line
   }, []);
+  function isInsideBoundary (box: Box3, offset: number) {
+    return ((box.min.x + offset) >= BOUNDARY_MIN_X)
+      && ((box.max.x + offset) <= BOUNDARY_MAX_X);
+  }
   useFrame(() => {
     if (ref.current) {
       ref.current.position.x = xOffset;
