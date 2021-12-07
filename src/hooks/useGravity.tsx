@@ -26,16 +26,12 @@ export function useGravity (activePiece: MutableRefObject<Mesh>, next: string) {
   function intersectsFloor () {
     const box = new Box3();
     box.setFromObject(activePiece.current);
-    return box.min.y <= BOUNDARY_MIN_Y;
+    return (Math.round(box.min.y * 10) / 10) <= BOUNDARY_MIN_Y;
   }
 
   useFrame(() => {
     if (activePiece.current) {
-      if (y > 0) {
-        activePiece.current.position.y = y;
-      } else {
-        activePiece.current.position.y = 0;
-      }
+      activePiece.current.position.y = y;
       if (intersectsFloor()) { 
         // TODO also check if piece would intersect the LockedPieces
         setReset(reset + 1);
