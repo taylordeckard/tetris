@@ -7,7 +7,7 @@ function S (props: { position: Vector3; }, ref: any) {
   const ys = [0,1];
   const color = 0x43FE43;
   return (
-    <group position={props.position} ref={ref}>
+    <group position={props.position} ref={ref} name="S">
       <CubeMesh position={new Vector3(-1, 0, -0.5)} color={color}/>
     {
       ys.map(y => (

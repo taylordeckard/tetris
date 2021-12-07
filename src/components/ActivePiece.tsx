@@ -8,31 +8,45 @@ import {
   TetrominoT,
 } from '../components/tetrominos';
 import { nextId } from '../utils';
-import { useEffect, forwardRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, forwardRef, useState } from 'react';
 import { Vector3 } from 'three';
+import { useGravity, usePositionControls, useRotationControls } from '../hooks';
+
+const indexLetterMap = ['I', 'J', 'L', 'O', 'S', 'Z', 'T'];
 
 function AP (props: {
   position: Vector3,
-  reset: number,
 }, ref: any) {
-  const tetrominoProps = {
-    position: props.position,
-    ref: ref,
-  };
-  const tetrominos = [
-    <TetrominoI key={nextId('ap-')} {...tetrominoProps}/>,
-    <TetrominoJ key={nextId('ap-')} {...tetrominoProps}/>,
-    <TetrominoL key={nextId('ap-')} {...tetrominoProps}/>,
-    <TetrominoO key={nextId('ap-')} {...tetrominoProps}/>,
-    <TetrominoS key={nextId('ap-')} {...tetrominoProps}/>,
-    <TetrominoZ key={nextId('ap-')} {...tetrominoProps}/>,
-    <TetrominoT key={nextId('ap-')} {...tetrominoProps}/>,
-  ];
-  const getRandomIdx = () => Math.floor(Math.random() * tetrominos.length);
-  const [randIdx, setRandIdx] = useState(getRandomIdx);
+  useRotationControls(ref);
+  const tetrominos = useMemo(() => {
+    const tetrominoProps = {
+      position: props.position,
+      ref: ref,
+    };
+    return [
+      <TetrominoI key={nextId('ap-')} {...tetrominoProps}/>,
+      <TetrominoJ key={nextId('ap-')} {...tetrominoProps}/>,
+      <TetrominoL key={nextId('ap-')} {...tetrominoProps}/>,
+      <TetrominoO key={nextId('ap-')} {...tetrominoProps}/>,
+      <TetrominoS key={nextId('ap-')} {...tetrominoProps}/>,
+      <TetrominoZ key={nextId('ap-')} {...tetrominoProps}/>,
+      <TetrominoT key={nextId('ap-')} {...tetrominoProps}/>,
+    ];
+  }, [props.position, ref]);
+  const getRandomIdx = useCallback(() => {
+    return Math.floor(Math.random() * tetrominos.length);
+    // eslint-disable-next-line
+  }, []);
+  const [randIdx, setRandIdx] = useState(getRandomIdx());
+  const [nextRandIdx, setNextRandIdx] = useState(getRandomIdx());
+  const reset = useGravity(ref, indexLetterMap[nextRandIdx]);
+  usePositionControls(ref, indexLetterMap[randIdx], reset);
   useEffect(() => {
-    setRandIdx(getRandomIdx())
-  }, [props.reset]);
+    setRandIdx(nextRandIdx);
+    setNextRandIdx(getRandomIdx());
+    // eslint-disable-next-line
+  }, [reset]);
+
   return tetrominos[randIdx];
 }
 
