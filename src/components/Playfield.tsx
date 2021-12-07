@@ -1,14 +1,17 @@
 import { ActivePiece } from './ActivePiece';
 import { PlayfieldGrid } from './PlayfieldGrid';
-import { useRef } from 'react';
-import { Mesh, Vector3 } from 'three';
+import { LockedPieces } from './LockedPieces';
+import { useRef, useState } from 'react';
+import { Group } from 'three';
 
 export function Playfield () {
-  const activePiece = useRef<Mesh>();
+  const activePiece = useRef<Group>();
+  const [lastLocked, setLastLocked] = useState<Group>();
   return (
     <>
       <PlayfieldGrid/>
-      <ActivePiece position={new Vector3(0, 12, 0)} ref={activePiece}/>
+      <ActivePiece ref={activePiece} onLock={(lockedPiece) => setLastLocked(lockedPiece)}/>
+      <LockedPieces lastLocked={lastLocked} />
     </>
   );
 }

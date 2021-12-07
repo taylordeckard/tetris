@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { Vector3 } from 'three';
 import { nextId } from '../../utils';
 
-function I (props: { position: Vector3; }, ref: any) {
+function I (props: { position?: Vector3; }, ref: any) {
   const ys = [-1.5,-0.5,0.5,1.5];
   return (
     <group position={props.position} ref={ref} name="I">

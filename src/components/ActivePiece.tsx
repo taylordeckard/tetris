@@ -9,12 +9,13 @@ import {
 } from '../components/tetrominos';
 import { nextId } from '../utils';
 import { useCallback, useEffect, useMemo, forwardRef, useState } from 'react';
-import { Vector3 } from 'three';
+import { Group, Vector3 } from 'three';
 import { useGravity, usePositionControls, useRotationControls } from '../hooks';
 
 
 function AP (props: {
-  position: Vector3,
+  position?: Vector3;
+  onLock?: (g: Group) => void;
 }, ref: any) {
   useRotationControls(ref);
   const indexLetterMap = ['I', 'J', 'L', 'O', 'S', 'Z', 'T'];
@@ -42,6 +43,9 @@ function AP (props: {
   const reset = useGravity(ref, indexLetterMap[nextRandIdx]);
   usePositionControls(ref, indexLetterMap[randIdx], reset);
   useEffect(() => {
+    if (reset >= 1) {
+      props.onLock?.(ref.current?.clone());
+    }
     setRandIdx(nextRandIdx);
     setNextRandIdx(getRandomIdx());
     // eslint-disable-next-line

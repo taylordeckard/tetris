@@ -3,7 +3,7 @@ import { CubeMesh } from './CubeMesh';
 import { Vector3 } from 'three';
 import { nextId } from '../../utils';
 
-function J (props: { position: Vector3; }, ref: any) {
+function J (props: { position?: Vector3; }, ref: any) {
   const ys = [-1,0,1];
   const color = 'blue';
   return (

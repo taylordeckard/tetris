@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { Vector3 } from 'three';
 import { nextId } from '../../utils';
 
-function T (props: { position: Vector3; }, ref: any) {
+function T (props: { position?: Vector3; }, ref: any) {
   const ys = [0,1];
   const color = 'purple';
   return (
