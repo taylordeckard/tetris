@@ -31,18 +31,28 @@ function AP (props: {
     ];
   }, [ref]);
   const [bag, setBag] = useState(getBag());
+  const [nextBag, setNextBag] = useState(getBag());
   const [bagIdx, setBagIdx] = useState(0);
-  const reset = useGravity(ref, indexLetterMap[bag[bagIdx + 1]]);
+  const [nextLetter, setNextLetter] = useState(indexLetterMap[bag[bagIdx + 1]]);
+  const reset = useGravity(ref, nextLetter);
   usePositionControls(ref, indexLetterMap[bag[bagIdx]], reset);
   useEffect(() => {
     if (reset >= 1) {
       props.onLock?.(ref.current?.clone());
     }
-    if (bagIdx + 1 === bag.length) {
-      setBag(getBag());
-      setBagIdx(0);
-    } else {
-      setBagIdx(bagIdx + 1);
+    if (reset !== 0) {
+      const nextBagIdx = bagIdx + 1;
+      if (nextBagIdx + 1 === bag.length) {
+        setNextLetter(indexLetterMap[nextBag[0]]);
+      }
+      if (nextBagIdx === bag.length) {
+        setBag(nextBag);
+        setNextBag(getBag())
+        setBagIdx(0);
+      } else {
+        setBagIdx(nextBagIdx);
+        setNextLetter(indexLetterMap[bag[nextBagIdx]]);
+      }
     }
     // eslint-disable-next-line
   }, [reset]);
