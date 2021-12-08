@@ -11,12 +11,24 @@ export function useGravity (activePiece: MutableRefObject<Mesh>, next: string) {
   const { state } = useContext(StateContext);
   const [y, setY] = useState(16.5);
   const [reset, setReset] = useState(0);
+  const [pause, setPause] = useState(false);
   const SPEED = 500;
   useEffect(() => {
     const interval = setInterval(() => {
-      setY(y => y - 1);
+      if (!pause) {
+        setY(y => y - 1);
+      }
     }, SPEED);
     return () => clearInterval(interval);
+  }, [pause]);
+  useEffect(() => {
+    const onPKey = (event: KeyboardEvent) => {
+      if (event.key === 'p') {
+        setPause(p => !p);
+      }
+    }
+    document.addEventListener('keydown', onPKey);
+    return () => document.removeEventListener('keydown', onPKey);
   }, []);
   useEffect(() => {
     if (activePiece.current) {
@@ -35,7 +47,9 @@ export function useGravity (activePiece: MutableRefObject<Mesh>, next: string) {
     return [...activePiece.current.children].some(mesh => {
       const mBox = new Box3();
       mBox.setFromObject(mesh);
-      return state.lockedBoxes.some(box => {
+      return state.lockedObjects.some(obj => {
+        const box = new Box3();
+        box.setFromObject(obj);
         const boxX = Math.round((Math.round(box.min.x) + Math.round(box.max.x)) / 2);
         const meshX = Math.round((Math.round(mBox.min.x) + Math.round(mBox.max.x)) / 2);
         const roundedMaxY = Math.round(box.max.y * 10) / 10;

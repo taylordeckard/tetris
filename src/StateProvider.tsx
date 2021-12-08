@@ -1,10 +1,10 @@
 import { createContext, Dispatch, useReducer } from 'react';
-import { Box3 } from 'three';
+import { Object3D } from 'three';
 
 const initialState:{
-  lockedBoxes: Box3[];
+  lockedObjects: Object3D[];
 } = {
-  lockedBoxes: [],
+  lockedObjects: [],
 };
 
 export const StateContext = createContext<{
