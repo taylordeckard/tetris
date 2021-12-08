@@ -9,19 +9,19 @@ import { StateProvider } from './StateProvider';
 
 function App() {
   return (
-    <StateProvider>
-      <Canvas
-        camera={{ position: [0, 7.5, 15], }}
-        style={{ height: '100vh' }}
-        shadows
-      >
-        <color args={[0x242424]} attach="background"/>
+    <Canvas
+      camera={{ position: [0, 7.5, 15], }}
+      style={{ height: '100vh' }}
+      shadows
+    >
+      <color args={[0x242424]} attach="background"/>
+      <StateProvider>
         <OrbitControls/>
         <Lighting/>
         <Playfield/>
         <Ground/>
-      </Canvas>
-    </StateProvider>
+      </StateProvider>
+    </Canvas>
   );
 }
 

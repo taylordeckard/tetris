@@ -1,4 +1,4 @@
-import { StateContext } from '../StateProvider';
+import { ActionType, StateContext } from '../StateProvider';
 import { useContext, useEffect, useRef } from 'react';
 import { Group, Object3D } from 'three';
 import { roundTenth } from '../utils';
@@ -6,14 +6,15 @@ import { roundTenth } from '../utils';
 export function LockedPieces (props: {
   lastLocked?: Group;
 }) {
-  const { state, dispatch } = useContext(StateContext);
+  const { dispatch } = useContext(StateContext);
   const lockedGroup = useRef<Group>();
   useEffect(() => {
     function dispatchLockedPieces () {
       if (lockedGroup.current) {
-        const newState = {...state};
-        state.lockedObjects = [...lockedGroup.current.children];
-        dispatch?.(newState);
+        dispatch?.({
+          type: ActionType.UPDATE_LOCKED_OBJECTS,
+          payload: [...lockedGroup.current.children],
+        });
       }
     }
     function clearRows () {
@@ -23,7 +24,7 @@ export function LockedPieces (props: {
       currentMeshes.forEach(mesh => {
         const x = roundTenth(mesh.position.x);
         const y = Math.round(mesh.position.y);
-        checks[y].add(x);
+        checks[y]?.add(x);
       });
       const removedMeshes: Object3D[] = [];
       const removedRows: Set<number> = new Set();
@@ -44,12 +45,15 @@ export function LockedPieces (props: {
         currentMeshes.splice(currentMeshIdx, 1);
       });
       if (removedRows.size) {
+        let subtractor = 0;
         removedRows.forEach(idx =>  {
-          const filtered = currentMeshes.filter(mesh => Math.round(mesh.position.y) > idx);
+          const filtered = currentMeshes
+            .filter(mesh => Math.round(mesh.position.y) > (idx + subtractor));
           filtered
             .forEach(mesh => {
               mesh.position.y -= 1;
             });
+          subtractor -= 1;
         });
         dispatchLockedPieces();
       }
@@ -58,11 +62,10 @@ export function LockedPieces (props: {
       [...props.lastLocked.children].forEach(mesh => {
         return lockedGroup.current?.attach(mesh)
       });
-      const newState = {...state};
-      state.lockedObjects = [...lockedGroup.current.children];
-      dispatch?.(newState);
+      dispatchLockedPieces();
       clearRows();
     }
+    // eslint-disable-next-line
   }, [props.lastLocked]);
 
   return (

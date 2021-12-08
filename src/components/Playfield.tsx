@@ -1,8 +1,7 @@
 import { ActivePiece } from './ActivePiece';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { LockedPieces } from './LockedPieces';
-import { StateContext } from '../StateProvider';
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Group } from 'three';
 
 export function Playfield () {
