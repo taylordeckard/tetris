@@ -31,6 +31,15 @@ export function useGravity (activePiece: MutableRefObject<Mesh>) {
     return () => document.removeEventListener('keydown', onPKey);
   }, []);
   useEffect(() => {
+    const onDownArrow = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowDown') {
+        setY(y => y - 1);
+      }
+    }
+    document.addEventListener('keydown', onDownArrow);
+    return () => document.removeEventListener('keydown', onDownArrow);
+  }, []);
+  useEffect(() => {
     if (activePiece.current) {
       setY(TMINO_STARTING_Y_MAP[activePiece.current.name]);
     }
