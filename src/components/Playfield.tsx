@@ -1,17 +1,24 @@
 import { ActivePiece } from './ActivePiece';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { LockedPieces } from './LockedPieces';
-import { useRef, useState } from 'react';
-import { Group } from 'three';
+import { useCallback, useState } from 'react';
+import { Object3D } from 'three';
 
 export function Playfield () {
-  const activePiece = useRef<Group>();
-  const [lastLocked, setLastLocked] = useState<Group>();
+  const [lastLocked, setLastLocked] = useState<Object3D>();
+
+  const [activePiece, setActivePiece] = useState<Object3D>();
+  const handleActivePiece = useCallback((obj: Object3D) => {
+    setActivePiece(obj);
+  }, []);
 
   return (
     <>
       <PlayfieldGrid/>
-      <ActivePiece ref={activePiece} onLock={piece => setLastLocked(piece)}/>
+      <ActivePiece
+        activePiece={activePiece}
+        ref={handleActivePiece}
+        onLock={piece => setLastLocked(piece)}/>
       <LockedPieces lastLocked={lastLocked} />
     </>
   );

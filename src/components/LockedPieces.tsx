@@ -4,7 +4,7 @@ import { Group, Object3D } from 'three';
 import { roundTenth } from '../utils';
 
 export function LockedPieces (props: {
-  lastLocked?: Group;
+  lastLocked?: Object3D;
 }) {
   const { dispatch } = useContext(StateContext);
   const lockedGroup = useRef<Group>();

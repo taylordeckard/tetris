@@ -10,16 +10,17 @@ import {
 import { getBag, nextId } from '../utils';
 import { StateContext } from '../StateProvider';
 import { useCallback, useContext, useEffect, useMemo, forwardRef, useState } from 'react';
-import { Group, Vector3 } from 'three';
+import { Object3D, Vector3 } from 'three';
 import { useGravity, usePositionControls, useRotationControls } from '../hooks';
 import { ActionType } from '../StateProvider';
 
 function AP (props: {
+  activePiece?: Object3D,
   position?: Vector3;
-  onLock?: (g: Group) => void;
+  onLock?: (g: Object3D) => void;
 }, ref: any) {
   const { dispatch } = useContext(StateContext);
-  useRotationControls(ref);
+  useRotationControls(props.activePiece);
   const indexLetterMap = useCallback(idx => ['I', 'J', 'L', 'O', 'S', 'Z', 'T'][idx], []);
   const tetrominos = useMemo(() => {
     const tetrominoProps = { ref: ref };
@@ -36,25 +37,27 @@ function AP (props: {
   const [bag, setBag] = useState(getBag());
   const [nextBag, setNextBag] = useState(getBag());
   const [bagIdx, setBagIdx] = useState(0);
-  const reset = useGravity(ref);
-  usePositionControls(ref, indexLetterMap(bag[bagIdx]), reset);
+  const reset = useGravity(props.activePiece);
+  usePositionControls(indexLetterMap(bag[bagIdx]), reset, props.activePiece);
   useEffect(() => {
     dispatch?.({ type: ActionType.UPDATE_CURRENT_TETROMINO, payload: indexLetterMap(bag[0]) });
     dispatch?.({ type: ActionType.UPDATE_NEXT_TETROMINO, payload: indexLetterMap(bag[1]) });
     // eslint-disable-next-line
   }, []);
   useEffect(() => {
-    if (reset >= 1) {
-      props.onLock?.(ref.current?.clone());
-    }
-    if (reset !== 0) {
-      const nextBagIdx = bagIdx + 1;
-      if (nextBagIdx === bag.length) {
-        setBag(nextBag);
-        setNextBag(getBag())
-        setBagIdx(0);
-      } else {
-        setBagIdx(nextBagIdx);
+    if (props.activePiece) {
+      if (reset >= 1) {
+        props.onLock?.(props.activePiece?.clone());
+      }
+      if (reset !== 0) {
+        const nextBagIdx = bagIdx + 1;
+        if (nextBagIdx === bag.length) {
+          setBag(nextBag);
+          setNextBag(getBag())
+          setBagIdx(0);
+        } else {
+          setBagIdx(nextBagIdx);
+        }
       }
     }
     // eslint-disable-next-line

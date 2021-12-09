@@ -1,7 +1,7 @@
-import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { StateContext } from '../StateProvider';
 import { useFrame } from '@react-three/fiber';
-import { Box3, Group } from 'three';
+import { Box3, Object3D } from 'three';
 import {
   BOUNDARY_MAX_X,
   BOUNDARY_MIN_X,
@@ -9,9 +9,9 @@ import {
 } from '../constants';
 
 export function usePositionControls (
-  ref: MutableRefObject<Group>,
   pieceLetter: string,
   reset: number,
+  activePiece?: Object3D,
 ) {
   const { state } = useContext(StateContext);
   const stateRef = useRef(state);
@@ -23,7 +23,9 @@ export function usePositionControls (
   useEffect(() => {
     const arrowRightLeftHandler = (event: KeyboardEvent) => {
       const box = new Box3();
-      box.setFromObject(ref.current);
+      if (activePiece) {
+        box.setFromObject(activePiece);
+      }
       if (
         event.key === 'ArrowLeft'
         && isInsideBoundary(box, -1)
@@ -42,13 +44,13 @@ export function usePositionControls (
     document.addEventListener('keydown', arrowRightLeftHandler);
     return () => document.removeEventListener('keydown', arrowRightLeftHandler);
     // eslint-disable-next-line
-  }, []);
+  }, [activePiece]);
   function isInsideBoundary (box: Box3, offset: number) {
     return ((box.min.x + offset) >= BOUNDARY_MIN_X)
       && ((box.max.x + offset) <= BOUNDARY_MAX_X);
   }
   function intersectsLocked (offset: number) {
-    return [...(ref.current?.children ?? [])].some(mesh => {
+    return [...(activePiece?.children ?? [])].some(mesh => {
       const mBox = new Box3();
       mBox.setFromObject(mesh);
       return stateRef.current.lockedObjects.some(obj => {
@@ -63,8 +65,8 @@ export function usePositionControls (
     })
   }
   useFrame(() => {
-    if (ref.current) {
-      ref.current.position.x = xOffset;
+    if (activePiece) {
+      activePiece.position.x = xOffset;
     }
   });
 }
