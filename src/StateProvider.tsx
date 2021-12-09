@@ -34,7 +34,7 @@ export const StateContext = createContext<{
 
 const Provider = StateContext.Provider;
 
-export const StateProvider = ({ children }: { children: JSX.Element[] }) => {
+export const StateProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
   const reducerFn = useCallback((oldState: State, action: Action) => {
     const newState = {...oldState};
     switch (action.type) {
