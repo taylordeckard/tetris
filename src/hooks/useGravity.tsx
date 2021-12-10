@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { StateContext } from 'State';
 import { useFrame } from '@react-three/fiber';
 import { Box3, Object3D } from 'three';
@@ -12,9 +12,54 @@ export function useGravity (activePiece?: Object3D) {
   const [y, setY] = useState(16.5);
   const [resetPiece, setResetPiece] = useState(0);
   const [resetGravity, setResetGravity] = useState(0);
-  const [downKeyPressed, setDownKeyPressed] = useState(false);
+  const [keyPressed, setKeyPressed] = useState(false);
+  const [locking, setLocking] = useState(false);
   const [pause, setPause] = useState(false);
   const SPEED = 500;
+
+  const intersectsFloor = useCallback(() => {
+    const box = new Box3();
+    if (activePiece) {
+      box.setFromObject(activePiece);
+      const roundedMinY = Math.round(box.min.y * 10) / 10;
+      const boundaryMinY = BOUNDARY_MIN_Y - 1;
+      const intersects = roundedMinY <= boundaryMinY;
+      if (intersects) { console.log({ roundedMinY, boundaryMinY, type: 'floor' }); }
+      return intersects;
+    }
+    return false;
+  }, [activePiece]);
+
+  const intersectsLocked = useCallback(() => {
+    return [...(activePiece?.children ?? [])].some(mesh => {
+      const mBox = new Box3();
+      mBox.setFromObject(mesh);
+      return state.lockedObjects.some(obj => {
+        const box = new Box3();
+        box.setFromObject(obj);
+        const boxX = Math.floor((Math.round(box.min.x) + Math.round(box.max.x)) / 2);
+        const meshX = Math.floor((Math.round(mBox.min.x) + Math.round(mBox.max.x)) / 2);
+        const roundedBoxMinY = (Math.round(box.min.y * 10) / 10);
+        const roundedMeshMinY = (Math.round(mBox.min.y * 10) / 10);
+        const intersects = meshX === boxX && roundedBoxMinY === roundedMeshMinY;
+        if (intersects) { console.log({ boxX, meshX, roundedBoxMinY, roundedMeshMinY, type: 'locked' }); }
+        return intersects;
+      });
+    })
+  }, [activePiece, state]);
+
+  const movePieceDown = useCallback((forceY?: number) => {
+    if (activePiece) {
+      activePiece.position.y = forceY ?? y;
+      if (intersectsFloor() || intersectsLocked()) {
+        activePiece.position.y = (forceY ?? y) + 1;
+        setResetPiece(resetPiece + 1);
+        setY(TMINO_STARTING_Y_MAP[state.nextTetromino]);
+        return true;
+      }
+    }
+    return false;
+  }, [activePiece, state, intersectsLocked, intersectsFloor, resetPiece, y]);
 
   useEffect(() => {
     if (activePiece) {
@@ -24,12 +69,12 @@ export function useGravity (activePiece?: Object3D) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!pause && !downKeyPressed) {
+      if (!pause && !keyPressed && !locking) {
         setY(y => y - 1);
       }
     }, SPEED);
     return () => clearInterval(interval);
-  }, [pause, resetGravity, downKeyPressed]);
+  }, [pause, resetGravity, keyPressed, locking]);
 
   useEffect(() => {
     const onPKey = (event: KeyboardEvent) => {
@@ -46,7 +91,7 @@ export function useGravity (activePiece?: Object3D) {
     const onDownArrowDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowDown') {
         setY(y => y - 1);
-        setDownKeyPressed(true);
+        setKeyPressed(true);
       }
     }
     document.addEventListener('keydown', onDownArrowDown);
@@ -54,52 +99,42 @@ export function useGravity (activePiece?: Object3D) {
   }, []);
 
   useEffect(() => {
-    const onDownArrowUp = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown') {
-        setDownKeyPressed(false);
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowDown' || event.key === ' ') {
+        setKeyPressed(false);
       }
     }
-    document.addEventListener('keyup', onDownArrowUp);
-    return () => document.removeEventListener('keydown', onDownArrowUp);
+    document.addEventListener('keyup', onKeyUp);
+    return () => document.removeEventListener('keyup', onKeyUp);
   }, []);
 
-  function intersectsFloor () {
-    const box = new Box3();
-    if (activePiece) {
-      box.setFromObject(activePiece);
-      const roundedMinY = Math.round(box.min.y * 10) / 10;
-      const boundaryMinY = BOUNDARY_MIN_Y - 1;
-      const intersects = roundedMinY <= boundaryMinY;
-      return intersects;
+  useEffect(() => {
+    const onSpaceDown = (event: KeyboardEvent) => {
+      if (event.key === ' ') {
+        setKeyPressed(true);
+        setLocking(true);
+      }
     }
-    return false;
-  }
+    document.addEventListener('keydown', onSpaceDown);
+    return () => document.removeEventListener('keydown', onSpaceDown);
+  }, [activePiece, movePieceDown]);
 
-  function intersectsLocked () {
-    return [...(activePiece?.children ?? [])].some(mesh => {
-      const mBox = new Box3();
-      mBox.setFromObject(mesh);
-      return state.lockedObjects.some(obj => {
-        const box = new Box3();
-        box.setFromObject(obj);
-        const boxX = Math.floor((Math.round(box.min.x) + Math.round(box.max.x)) / 2);
-        const meshX = Math.floor((Math.round(mBox.min.x) + Math.round(mBox.max.x)) / 2);
-        const roundedBoxMinY = (Math.round(box.min.y * 10) / 10);
-        const roundedMeshMinY = (Math.round(mBox.min.y * 10) / 10);
-        const intersects = meshX === boxX && roundedBoxMinY === roundedMeshMinY;
-        return intersects;
-      });
-    })
-  }
+  useEffect(() => {
+    if (locking) {
+      if (activePiece) {
+        for (let i = 0; i < 20; i++) {
+          if (movePieceDown(activePiece.position.y - 1)) {
+            break;
+          }
+        }
+        setLocking(false);
+      }
+    }
+  }, [activePiece, movePieceDown, locking]);
 
   useFrame(() => {
-    if (activePiece) {
-      activePiece.position.y = y;
-      if (intersectsFloor() || intersectsLocked()) {
-        activePiece.position.y = y + 1;
-        setResetPiece(resetPiece + 1);
-        setY(TMINO_STARTING_Y_MAP[state.nextTetromino]);
-      }
+    if (!locking) {
+      movePieceDown();
     }
   });
 
