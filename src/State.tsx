@@ -2,15 +2,21 @@ import { createContext, Dispatch, useCallback, useReducer } from 'react';
 import { Object3D } from 'three';
 
 interface State {
-  lockedObjects: Object3D[];
   currentTetromino: string;
+  level: number;
+  linesCleared: number;
+  lockedObjects: Object3D[];
   nextTetromino: string;
+  score: number;
 }
 
 export enum ActionType {
   UPDATE_LOCKED_OBJECTS,
   UPDATE_CURRENT_TETROMINO,
   UPDATE_NEXT_TETROMINO,
+  UPDATE_SCORE,
+  UPDATE_LEVEL,
+  UPDATE_LINES_CLEARED,
 }
 
 export interface Action {
@@ -19,9 +25,12 @@ export interface Action {
 }
 
 const initialState: State = {
-  lockedObjects: [],
   currentTetromino: '',
+  level: 0,
+  linesCleared: 0,
+  lockedObjects: [],
   nextTetromino: '',
+  score: 0,
 };
 
 export const StateContext = createContext<{
@@ -46,6 +55,15 @@ export const StateProvider = ({ children }: { children: JSX.Element | JSX.Elemen
       break;
     case ActionType.UPDATE_NEXT_TETROMINO:
       newState.nextTetromino = action.payload;
+      break
+    case ActionType.UPDATE_SCORE:
+      newState.score = action.payload;
+      break
+    case ActionType.UPDATE_LEVEL:
+      newState.level = action.payload;
+      break
+    case ActionType.UPDATE_LINES_CLEARED:
+      newState.linesCleared = action.payload;
       break
     default:
     }

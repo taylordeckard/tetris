@@ -6,13 +6,12 @@ import {
   TetrominoS,
   TetrominoZ,
   TetrominoT,
-} from '../components/tetrominos';
-import { getBag, nextId } from '../utils';
-import { StateContext } from '../StateProvider';
+} from './tetrominos';
+import { getBag, nextId } from 'utils';
+import { ActionType, StateContext } from 'State';
 import { useCallback, useContext, useEffect, useMemo, forwardRef, useState } from 'react';
 import { Object3D, Vector3 } from 'three';
-import { useGravity, usePositionControls, useRotationControls } from '../hooks';
-import { ActionType } from '../StateProvider';
+import { useGravity, usePositionControls, useRotationControls } from 'hooks';
 
 function AP (props: {
   activePiece?: Object3D,

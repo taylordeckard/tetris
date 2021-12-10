@@ -1,13 +1,15 @@
-import { ActionType, StateContext } from '../StateProvider';
+import { ActionType, StateContext } from 'State';
 import { useContext, useEffect, useRef } from 'react';
 import { Group, Object3D } from 'three';
-import { roundTenth } from '../utils';
+import { roundTenth } from 'utils';
+import { useScorer } from 'hooks';
 
 export function LockedPieces (props: {
   lastLocked?: Object3D;
 }) {
   const { dispatch } = useContext(StateContext);
   const lockedGroup = useRef<Group>();
+  const { clearLines } = useScorer();
   useEffect(() => {
     function dispatchLockedPieces () {
       if (lockedGroup.current) {
@@ -56,6 +58,7 @@ export function LockedPieces (props: {
           subtractor -= 1;
         });
         dispatchLockedPieces();
+        clearLines(removedRows.size);
       }
     }
     if (lockedGroup.current && props.lastLocked) {

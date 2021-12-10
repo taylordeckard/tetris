@@ -4,7 +4,7 @@ import { Ground } from './Ground';
 import { Lighting } from './Lighting';
 import { OrbitControls } from './OrbitControls';
 import { Playfield } from './Playfield';
-import { StateContext } from '../StateProvider';
+import { StateContext } from 'State';
 
 export function ThreeCanvas () {
   const { state, dispatch } = useContext(StateContext);

@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { CubeMesh } from './CubeMesh';
 import { Vector3 } from 'three';
-import { nextId } from '../../utils';
+import { nextId } from 'utils';
 
 function J (props: { position?: Vector3; }, ref: any) {
   const ys = [-1,0,1];

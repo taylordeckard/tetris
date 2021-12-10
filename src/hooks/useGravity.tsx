@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { StateContext } from '../StateProvider';
+import { StateContext } from 'State';
 import { useFrame } from '@react-three/fiber';
 import { Box3, Object3D } from 'three';
 import {
