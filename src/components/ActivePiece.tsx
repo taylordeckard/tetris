@@ -83,7 +83,11 @@ function AP (props: {
     // eslint-disable-next-line
   }, [bagIdx]);
 
-  return tetrominos[bag[bagIdx]];
+  return (
+    <>
+      {tetrominos[bag[bagIdx]]}
+    </>
+  );
 }
 
 export const ActivePiece = forwardRef(AP);

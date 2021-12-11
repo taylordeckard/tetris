@@ -6,6 +6,7 @@ import {
   BOUNDARY_MIN_Y,
   TMINO_STARTING_Y_MAP,
 } from '../constants';
+import { roundTenth } from 'utils';
 
 export function useGravity (activePiece?: Object3D) {
   const { state, dispatch } = useContext(StateContext);
@@ -22,7 +23,7 @@ export function useGravity (activePiece?: Object3D) {
     const box = new Box3();
     if (activePiece) {
       box.setFromObject(activePiece);
-      const roundedMinY = Math.round(box.min.y * 10) / 10;
+      const roundedMinY = roundTenth(box.min.y);
       const boundaryMinY = BOUNDARY_MIN_Y - 1;
       const intersects = roundedMinY <= boundaryMinY;
       return intersects;
@@ -37,10 +38,10 @@ export function useGravity (activePiece?: Object3D) {
       return state.lockedObjects.some(obj => {
         const box = new Box3();
         box.setFromObject(obj);
-        const boxX = Math.floor((Math.round(box.min.x) + Math.round(box.max.x)) / 2);
-        const meshX = Math.floor((Math.round(mBox.min.x) + Math.round(mBox.max.x)) / 2);
-        const roundedBoxMinY = (Math.round(box.min.y * 10) / 10);
-        const roundedMeshMinY = (Math.round(mBox.min.y * 10) / 10);
+        const boxX = roundTenth((roundTenth(box.min.x) + roundTenth(box.max.x)) / 2);
+        const meshX = roundTenth((roundTenth(mBox.min.x) + roundTenth(mBox.max.x)) / 2);
+        const roundedBoxMinY = roundTenth(box.min.y);
+        const roundedMeshMinY = roundTenth(mBox.min.y);
         const intersects = meshX === boxX && roundedBoxMinY === roundedMeshMinY;
         return intersects;
       });
