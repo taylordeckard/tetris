@@ -25,7 +25,6 @@ export function useGravity (activePiece?: Object3D) {
       const roundedMinY = Math.round(box.min.y * 10) / 10;
       const boundaryMinY = BOUNDARY_MIN_Y - 1;
       const intersects = roundedMinY <= boundaryMinY;
-      if (intersects) { console.log({ roundedMinY, boundaryMinY, type: 'floor' }); }
       return intersects;
     }
     return false;
@@ -43,7 +42,6 @@ export function useGravity (activePiece?: Object3D) {
         const roundedBoxMinY = (Math.round(box.min.y * 10) / 10);
         const roundedMeshMinY = (Math.round(mBox.min.y * 10) / 10);
         const intersects = meshX === boxX && roundedBoxMinY === roundedMeshMinY;
-        if (intersects) { console.log({ boxX, meshX, roundedBoxMinY, roundedMeshMinY, type: 'locked' }); }
         return intersects;
       });
     })
