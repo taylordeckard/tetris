@@ -7,11 +7,14 @@ interface State {
   linesCleared: number;
   lockedObjects: Object3D[];
   nextTetromino: string;
-  score: number;
   paused: boolean;
+  score: number;
+  started: boolean;
 }
 
 export enum ActionType {
+  END_GAME,
+  START_GAME,
   UPDATE_CURRENT_TETROMINO,
   UPDATE_LEVEL,
   UPDATE_LINES_CLEARED,
@@ -23,7 +26,7 @@ export enum ActionType {
 
 export interface Action {
   type: ActionType;
-  payload: any;
+  payload?: any;
 }
 
 const initialState: State = {
@@ -32,8 +35,9 @@ const initialState: State = {
   linesCleared: 0,
   lockedObjects: [],
   nextTetromino: '',
-  score: 0,
   paused: false,
+  score: 0,
+  started: false,
 };
 
 export const StateContext = createContext<{
@@ -70,6 +74,12 @@ export const StateProvider = ({ children }: { children: JSX.Element | JSX.Elemen
       break
     case ActionType.UPDATE_PAUSE:
       newState.paused = action.payload;
+      break
+    case ActionType.START_GAME:
+      newState.started = true;
+      break
+    case ActionType.END_GAME:
+      newState.started = false;
       break
     default:
     }

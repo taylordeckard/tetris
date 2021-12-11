@@ -5,5 +5,6 @@ export * from './LockedPieces';
 export * from './OrbitControls';
 export * from './Playfield';
 export * from './PlayfieldGrid';
-export * from './ThreeCanvas';
 export * from './ScoreDisplay';
+export * from './ThreeCanvas';
+export * from './Title';
