@@ -3,6 +3,7 @@ import { Object3D } from 'three';
 
 interface State {
   currentTetromino: string;
+  highScore: number;
   level: number;
   linesCleared: number;
   lockedObjects: Object3D[];
@@ -31,6 +32,7 @@ export interface Action {
 
 const initialState: State = {
   currentTetromino: '',
+  highScore: 0,
   level: 0,
   linesCleared: 0,
   lockedObjects: [],
@@ -80,6 +82,8 @@ export const StateProvider = ({ children }: { children: JSX.Element | JSX.Elemen
       break
     case ActionType.END_GAME:
       newState.started = false;
+      newState.highScore = Math.max(oldState.highScore, oldState.score);
+      newState.score = 0;
       break
     default:
     }

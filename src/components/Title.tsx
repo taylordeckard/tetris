@@ -3,7 +3,7 @@ import { ActionType, StateContext } from 'State';
 import 'styles/title.css';
 
 export function Title () {
-  const { dispatch } = useContext(StateContext);
+  const { state, dispatch } = useContext(StateContext);
 
   return (
     <div className="title-wrapper">
@@ -16,6 +16,10 @@ export function Title () {
         <span>S</span>
       </div>
       <button onClick={() => dispatch?.({ type: ActionType.START_GAME })}>Play</button>
+      {
+        state.highScore > 0 &&
+        <div className="high-score">High Score: { state.highScore }</div>
+      }
     </div>
   );
 }

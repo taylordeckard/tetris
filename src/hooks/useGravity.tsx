@@ -14,6 +14,7 @@ export function useGravity (activePiece?: Object3D) {
   const [resetGravity, setResetGravity] = useState(0);
   const [keyPressed, setKeyPressed] = useState(false);
   const [locking, setLocking] = useState(false);
+  const [endGameCheck, setEndGameCheck] = useState(false);
   const [pause, setPause] = useState(false);
   const SPEED = 500;
 
@@ -55,15 +56,29 @@ export function useGravity (activePiece?: Object3D) {
         activePiece.position.y = (forceY ?? y) + 1;
         setResetPiece(resetPiece + 1);
         setY(TMINO_STARTING_Y_MAP[state.nextTetromino]);
+        if (endGameCheck) {
+          dispatch?.({ type: ActionType.END_GAME });
+        }
         return true;
       }
+      setEndGameCheck(false);
     }
     return false;
-  }, [activePiece, state, intersectsLocked, intersectsFloor, resetPiece, y]);
+  }, [
+    activePiece,
+    dispatch,
+    endGameCheck,
+    intersectsFloor,
+    intersectsLocked,
+    resetPiece,
+    state,
+    y,
+  ]);
 
   useEffect(() => {
     if (activePiece) {
       setY(TMINO_STARTING_Y_MAP[activePiece.name]);
+      setEndGameCheck(true);
     }
   }, [activePiece]);
 

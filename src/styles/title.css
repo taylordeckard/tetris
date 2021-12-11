@@ -13,7 +13,7 @@
 .title-wrapper {
   position: fixed;
   left: calc(50vw - 98px);
-  top: calc(50vh - 50px);
+  top: calc(50vh - 93px);
   text-align: center;
 }
 .title-wrapper button {
@@ -28,4 +28,10 @@
   color: #ffffff;
   padding: 8px;
   box-shadow: 2px 2px 4px rgb(0 0 0 / 50%);
+}
+.high-score {
+  margin-top: 20px;
+  font-family: Arial;
+  color: lightgreen;
+  text-shadow: 1px 1px 1px rgb(0 0 0 / 50%);
 }
