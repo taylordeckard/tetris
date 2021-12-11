@@ -144,10 +144,13 @@ export function useGravity (activePiece?: Object3D) {
             break;
           }
         }
-        setLocking(false);
       }
     }
   }, [activePiece, movePieceDown, locking]);
+
+  useEffect(() => {
+    setLocking(false);
+  }, [y]);
 
   useFrame(() => {
     if (!locking) {
