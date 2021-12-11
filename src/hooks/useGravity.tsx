@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { StateContext } from 'State';
+import { ActionType, StateContext } from 'State';
 import { useFrame } from '@react-three/fiber';
 import { Box3, Object3D } from 'three';
 import {
@@ -8,7 +8,7 @@ import {
 } from '../constants';
 
 export function useGravity (activePiece?: Object3D) {
-  const { state } = useContext(StateContext);
+  const { state, dispatch } = useContext(StateContext);
   const [y, setY] = useState(16.5);
   const [resetPiece, setResetPiece] = useState(0);
   const [resetGravity, setResetGravity] = useState(0);
@@ -79,24 +79,27 @@ export function useGravity (activePiece?: Object3D) {
   useEffect(() => {
     const onPKey = (event: KeyboardEvent) => {
       if (event.key === 'p') {
-        setPause(p => !p);
+        setPause(p => {
+          dispatch?.({ type: ActionType.UPDATE_PAUSE, payload: !p });
+          return !p;
+        });
         setResetGravity(g => g + 1);
       }
     }
     document.addEventListener('keydown', onPKey);
     return () => document.removeEventListener('keydown', onPKey);
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const onDownArrowDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown') {
+      if (event.key === 'ArrowDown' && !pause) {
         setY(y => y - 1);
         setKeyPressed(true);
       }
     }
     document.addEventListener('keydown', onDownArrowDown);
     return () => document.removeEventListener('keydown', onDownArrowDown);
-  }, []);
+  }, [pause]);
 
   useEffect(() => {
     const onKeyUp = (event: KeyboardEvent) => {
@@ -110,14 +113,14 @@ export function useGravity (activePiece?: Object3D) {
 
   useEffect(() => {
     const onSpaceDown = (event: KeyboardEvent) => {
-      if (event.key === ' ') {
+      if (event.key === ' ' && !pause) {
         setKeyPressed(true);
         setLocking(true);
       }
     }
     document.addEventListener('keydown', onSpaceDown);
     return () => document.removeEventListener('keydown', onSpaceDown);
-  }, [activePiece, movePieceDown]);
+  }, [activePiece, movePieceDown, pause]);
 
   useEffect(() => {
     if (locking) {

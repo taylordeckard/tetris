@@ -26,25 +26,27 @@ export function usePositionControls (
       if (activePiece) {
         box.setFromObject(activePiece);
       }
-      if (
-        event.key === 'ArrowLeft'
-        && isInsideBoundary(box, -1)
-        && !intersectsLocked(-1)
-      ) {
-        setXOffset(x => x - 1);
-      }
-      if (
-        event.key === 'ArrowRight'
-        && isInsideBoundary(box, 1)
-        && !intersectsLocked(1)
-      ) {
-        setXOffset(x => x + 1);
+      if (!state.paused) {
+        if (
+          event.key === 'ArrowLeft'
+          && isInsideBoundary(box, -1)
+          && !intersectsLocked(-1)
+        ) {
+          setXOffset(x => x - 1);
+        }
+        if (
+          event.key === 'ArrowRight'
+          && isInsideBoundary(box, 1)
+          && !intersectsLocked(1)
+        ) {
+          setXOffset(x => x + 1);
+        }
       }
     };
     document.addEventListener('keydown', arrowRightLeftHandler);
     return () => document.removeEventListener('keydown', arrowRightLeftHandler);
     // eslint-disable-next-line
-  }, [activePiece]);
+  }, [activePiece, state]);
   function isInsideBoundary (box: Box3, offset: number) {
     return ((box.min.x + offset) >= BOUNDARY_MIN_X)
       && ((box.max.x + offset) <= BOUNDARY_MAX_X);
