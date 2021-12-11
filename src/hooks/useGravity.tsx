@@ -94,7 +94,6 @@ export function useGravity (activePiece?: Object3D) {
     const onPKey = (event: KeyboardEvent) => {
       if (event.key === 'p') {
         setPause(p => {
-          dispatch?.({ type: ActionType.UPDATE_PAUSE, payload: !p });
           return !p;
         });
         setResetGravity(g => g + 1);
@@ -102,7 +101,7 @@ export function useGravity (activePiece?: Object3D) {
     }
     document.addEventListener('keydown', onPKey);
     return () => document.removeEventListener('keydown', onPKey);
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const onDownArrowDown = (event: KeyboardEvent) => {
@@ -151,6 +150,10 @@ export function useGravity (activePiece?: Object3D) {
   useEffect(() => {
     setLocking(false);
   }, [y]);
+
+  useEffect(() => {
+    dispatch?.({ type: ActionType.UPDATE_PAUSE, payload: pause });
+  }, [pause, dispatch]);
 
   useFrame(() => {
     if (!locking) {
