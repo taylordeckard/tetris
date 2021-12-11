@@ -5,6 +5,7 @@ import { Box3, Object3D } from 'three';
 import {
   BOUNDARY_MIN_Y,
   TMINO_STARTING_Y_MAP,
+  LEVEL_SPEED,
 } from '../constants';
 import { roundTenth } from 'utils';
 
@@ -12,12 +13,12 @@ export function useGravity (activePiece?: Object3D) {
   const { state, dispatch } = useContext(StateContext);
   const [y, setY] = useState(16.5);
   const [resetPiece, setResetPiece] = useState(0);
-  const [resetGravity, setResetGravity] = useState(0);
   const [keyPressed, setKeyPressed] = useState(false);
   const [locking, setLocking] = useState(false);
   const [endGameCheck, setEndGameCheck] = useState(false);
   const [pause, setPause] = useState(false);
-  const SPEED = 500;
+  const [frame, setFrame] = useState(0);
+  const [speed, setSpeed] = useState(48);
 
   const intersectsFloor = useCallback(() => {
     const box = new Box3();
@@ -48,7 +49,7 @@ export function useGravity (activePiece?: Object3D) {
     })
   }, [activePiece, state]);
 
-  const movePieceDown = useCallback((forceY?: number) => {
+  const movePieceDown = useCallback((forceY?: number, endGameCheck?: boolean) => {
     if (activePiece) {
       activePiece.position.y = forceY ?? y;
       if (intersectsFloor() || intersectsLocked()) {
@@ -66,7 +67,6 @@ export function useGravity (activePiece?: Object3D) {
   }, [
     activePiece,
     dispatch,
-    endGameCheck,
     intersectsFloor,
     intersectsLocked,
     resetPiece,
@@ -82,21 +82,9 @@ export function useGravity (activePiece?: Object3D) {
   }, [activePiece]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (!pause && !keyPressed && !locking) {
-        setY(y => y - 1);
-      }
-    }, SPEED);
-    return () => clearInterval(interval);
-  }, [pause, resetGravity, keyPressed, locking]);
-
-  useEffect(() => {
     const onPKey = (event: KeyboardEvent) => {
       if (event.key === 'p') {
-        setPause(p => {
-          return !p;
-        });
-        setResetGravity(g => g + 1);
+        setPause(p => !p);
       }
     }
     document.addEventListener('keydown', onPKey);
@@ -127,7 +115,6 @@ export function useGravity (activePiece?: Object3D) {
   useEffect(() => {
     const onSpaceDown = (event: KeyboardEvent) => {
       if (event.key === ' ' && !pause) {
-        setKeyPressed(true);
         setLocking(true);
       }
     }
@@ -139,13 +126,14 @@ export function useGravity (activePiece?: Object3D) {
     if (locking) {
       if (activePiece) {
         for (let i = 0; i < 20; i++) {
-          if (movePieceDown(activePiece.position.y - 1)) {
+          if (movePieceDown(activePiece.position.y - 1, false)) {
             break;
           }
         }
       }
     }
-  }, [activePiece, movePieceDown, locking]);
+    // eslint-disable-next-line
+  }, [locking]);
 
   useEffect(() => {
     setLocking(false);
@@ -155,9 +143,25 @@ export function useGravity (activePiece?: Object3D) {
     dispatch?.({ type: ActionType.UPDATE_PAUSE, payload: pause });
   }, [pause, dispatch]);
 
+  useEffect(() => {
+    if (frame === speed && !keyPressed && !pause) {
+      setY(y => y - 1);
+    }
+    // eslint-disable-next-line
+  }, [frame]);
+
+  useEffect(() => {
+    setSpeed(speed => LEVEL_SPEED[state.level] ?? 1);
+  }, [state.level])
+
   useFrame(() => {
-    if (!locking) {
-      movePieceDown();
+    if (frame >= speed) {
+      setFrame(0);
+    } else {
+      setFrame(frame + 1);
+    }
+    if (!locking && !pause) {
+      movePieceDown(undefined, endGameCheck);
     }
   });
 

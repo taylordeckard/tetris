@@ -54,7 +54,7 @@ const Provider = StateContext.Provider;
 
 export const StateProvider = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
   const reducerFn = useCallback((oldState: State, action: Action) => {
-    const newState = {...oldState};
+    let newState = {...oldState};
     switch (action.type) {
     case ActionType.UPDATE_CURRENT_TETROMINO:
       newState.currentTetromino = action.payload;
@@ -78,12 +78,21 @@ export const StateProvider = ({ children }: { children: JSX.Element | JSX.Elemen
       newState.paused = action.payload;
       break
     case ActionType.START_GAME:
-      newState.started = true;
+      newState = {
+        currentTetromino: '',
+        highScore: 0,
+        level: 0,
+        linesCleared: 0,
+        lockedObjects: [],
+        nextTetromino: '',
+        paused: false,
+        score: 0,
+        started: true,
+      };
       break
     case ActionType.END_GAME:
       newState.started = false;
       newState.highScore = Math.max(oldState.highScore, oldState.score);
-      newState.score = 0;
       break
     default:
     }
