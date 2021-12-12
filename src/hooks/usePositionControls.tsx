@@ -22,12 +22,14 @@ export function usePositionControls (
     setXOffset(TMINO_STARTING_X_MAP[pieceLetter]);
   }, [pieceLetter, reset]);
   useEffect(() => {
+    let downMovement = false;
     const arrowRightLeftHandler = (event: KeyboardEvent) => {
       const box = new Box3();
       if (activePiece) {
         box.setFromObject(activePiece);
       }
-      if (!state.paused) {
+      if (!state.paused && !downMovement) {
+        if (event.key === 'ArrowDown') { downMovement = true; }
         if (
           event.key === 'ArrowLeft'
           && isInsideBoundary(box, -1)
@@ -44,8 +46,15 @@ export function usePositionControls (
         }
       }
     };
+    function onKeyUp (event: KeyboardEvent) {
+      if (event.key === 'ArrowDown') { downMovement = false; }
+    }
     document.addEventListener('keydown', arrowRightLeftHandler);
-    return () => document.removeEventListener('keydown', arrowRightLeftHandler);
+    document.addEventListener('keyup', onKeyUp);
+    return () => {
+      document.removeEventListener('keydown', arrowRightLeftHandler);
+      document.removeEventListener('keyup', onKeyUp);
+    };
     // eslint-disable-next-line
   }, [activePiece, state]);
   const isInsideBoundary = useCallback((box: Box3, offset: number) => {

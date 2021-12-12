@@ -76,6 +76,7 @@ export function useGravity (activePiece?: Object3D) {
 
   useEffect(() => {
     if (activePiece) {
+      activePiece.position.y = TMINO_STARTING_Y_MAP[activePiece.name];
       setY(TMINO_STARTING_Y_MAP[activePiece.name]);
       setEndGameCheck(true);
     }
@@ -92,24 +93,33 @@ export function useGravity (activePiece?: Object3D) {
   }, []);
 
   useEffect(() => {
+    let xMovement = false;
     const onDownArrowDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown' && !pause) {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        xMovement = true;
+      }
+      if (event.key === 'ArrowDown' && !pause && !xMovement) {
         setY(y => y - 1);
         setKeyPressed(true);
       }
     }
-    document.addEventListener('keydown', onDownArrowDown);
-    return () => document.removeEventListener('keydown', onDownArrowDown);
-  }, [pause]);
-
-  useEffect(() => {
     const onKeyUp = (event: KeyboardEvent) => {
       if (event.key === 'ArrowDown' || event.key === ' ') {
         setKeyPressed(false);
       }
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        xMovement = false;
+      }
     }
+    document.addEventListener('keydown', onDownArrowDown);
     document.addEventListener('keyup', onKeyUp);
-    return () => document.removeEventListener('keyup', onKeyUp);
+    return () => {
+      document.removeEventListener('keydown', onDownArrowDown);
+      document.removeEventListener('keyup', onKeyUp);
+    };
+  }, [pause]);
+
+  useEffect(() => {
   }, []);
 
   useEffect(() => {
