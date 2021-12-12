@@ -34,7 +34,7 @@ function AP (props: {
     ];
   }, [ref]);
   const [bag, setBag] = useState(getBag());
-  const [nextBag, setNextBag] = useState(getBag());
+  const [nextBag, setNextBag] = useState(getBag(bag));
   const [bagIdx, setBagIdx] = useState(0);
   const reset = useGravity(props.activePiece);
   usePositionControls(indexLetterMap(bag[bagIdx]), reset, props.activePiece);
@@ -52,7 +52,7 @@ function AP (props: {
         const nextBagIdx = bagIdx + 1;
         if (nextBagIdx === bag.length) {
           setBag(nextBag);
-          setNextBag(getBag())
+          setNextBag(getBag(nextBag))
           setBagIdx(0);
         } else {
           setBagIdx(nextBagIdx);

@@ -30,10 +30,25 @@ code {
   color: #ffffff;
   padding: 8px;
   box-shadow: 2px 2px 4px rgb(0 0 0 / 50%);
+  user-select: none;
 }
 .content__title {
   font-size: 86px;
   user-select: none;
   text-shadow: 2px 2px 4px rgb(0 0 0 / 50%);
   color: white;
+}
+.mobile {
+  font-family: arial;
+  background: #2f2f2f;
+  height: 100vh;
+  width: 100vw;
+  text-align: center;
+}
+.mobile div {
+  font-size: 50px;
+  color: white;
+  position: absolute;
+  top: calc(50vh - 87px);
+  margin: 0px 20px 0px 20px;
 }

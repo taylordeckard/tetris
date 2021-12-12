@@ -12,6 +12,7 @@ export function ScoreDisplay () {
         right: '20px',
         color: 'white',
         fontSize: '32px',
+        userSelect: 'none',
       }}
     >
       <div>Score: { state.score }</div>
