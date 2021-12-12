@@ -2,6 +2,7 @@ import { ActivePiece } from './ActivePiece';
 import { StateContext } from 'State';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { LockedPieces } from './LockedPieces';
+import { NextPiece } from './NextPiece';
 import { useCallback, useContext, useState } from 'react';
 import { Object3D } from 'three';
 
@@ -25,6 +26,7 @@ export function Playfield () {
             ref={handleActivePiece}
             onLock={piece => setLastLocked(piece)}/>
           <LockedPieces lastLocked={lastLocked} />
+          <NextPiece />
         </>
       }
     </>

@@ -154,6 +154,10 @@ export function useGravity (activePiece?: Object3D) {
     setSpeed(speed => LEVEL_SPEED[state.level] ?? 1);
   }, [state.level])
 
+  useEffect(() => {
+    setPause(state.paused);
+  }, [state.paused]);
+
   useFrame(() => {
     if (frame >= speed) {
       setFrame(0);

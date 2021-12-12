@@ -8,3 +8,5 @@ export * from './PlayfieldGrid';
 export * from './ScoreDisplay';
 export * from './ThreeCanvas';
 export * from './Title';
+export * from './NextPiece';
+export * from './Paused';
