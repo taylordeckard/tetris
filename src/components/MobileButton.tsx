@@ -7,11 +7,14 @@ export function MobileButton (props: {
   const [button, setButton] = useState<HTMLButtonElement | null>();
 
   useEffect(() => {
-    function touchstartHandler () {
-      console.log('here');
+    function touchstartHandler (event: TouchEvent) {
+      event.stopPropagation();
+      event.preventDefault();
       document.dispatchEvent(new KeyboardEvent('keydown', { key: props.type }));
     }
-    function touchendHandler () {
+    function touchendHandler (event: TouchEvent) {
+      event.stopPropagation();
+      event.preventDefault();
       document.dispatchEvent(new KeyboardEvent('keyup', { key: props.type }));
     }
     if (button) {
