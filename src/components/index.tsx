@@ -2,11 +2,13 @@ export * from './ActivePiece'
 export * from './Ground';
 export * from './Lighting';
 export * from './LockedPieces';
+export * from './MobileButton';
+export * from './MobileControls';
+export * from './NextPiece';
 export * from './OrbitControls';
+export * from './Paused';
 export * from './Playfield';
 export * from './PlayfieldGrid';
 export * from './ScoreDisplay';
 export * from './ThreeCanvas';
 export * from './Title';
-export * from './NextPiece';
-export * from './Paused';

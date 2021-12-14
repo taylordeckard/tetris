@@ -1,21 +1,17 @@
-import { BrowserView, MobileView } from 'react-device-detect';
+import { MobileView } from 'react-device-detect';
 import { ScoreDisplay, ThreeCanvas } from 'components';
 import { StateProvider } from 'State';
-import { Paused, Title } from 'components';
+import { Paused, Title, MobileControls } from 'components';
 
 function App() {
   return (
     <StateProvider>
-      <BrowserView>
-        <ThreeCanvas/>
-        <ScoreDisplay/>
-        <Title/>
-        <Paused/>
-      </BrowserView>
+      <ThreeCanvas/>
+      <ScoreDisplay/>
+      <Title/>
+      <Paused/>
       <MobileView>
-        <div className="mobile">
-          <div>Sorry... Your device is not yet supported.</div>
-        </div>
+        <MobileControls/>
       </MobileView>
     </StateProvider>
   );
