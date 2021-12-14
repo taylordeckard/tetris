@@ -1,7 +1,9 @@
 import { createContext, Dispatch, useCallback, useReducer } from 'react';
 import { Object3D } from 'three';
+import { getCache, setCache } from 'utils';
 
 interface State {
+  camera: 'perspective' | 'orthographic';
   currentTetromino: string;
   highScore: number;
   level: number;
@@ -16,6 +18,7 @@ interface State {
 export enum ActionType {
   END_GAME,
   START_GAME,
+  TOGGLE_CAMERA,
   UPDATE_CURRENT_TETROMINO,
   UPDATE_LEVEL,
   UPDATE_LINES_CLEARED,
@@ -30,23 +33,27 @@ export interface Action {
   payload?: any;
 }
 
-const initialState: State = {
-  currentTetromino: '',
-  highScore: 0,
-  level: 0,
-  linesCleared: 0,
-  lockedObjects: [],
-  nextTetromino: '',
-  paused: false,
-  score: 0,
-  started: false,
+const getInitialState: () => State = () => {
+  const cache = getCache();
+  return {
+    camera: cache?.camera ?? 'perspective',
+    currentTetromino: '',
+    highScore: cache?.highScore ?? 0,
+    level: 0,
+    linesCleared: 0,
+    lockedObjects: [],
+    nextTetromino: '',
+    paused: false,
+    score: 0,
+    started: false,
+  };
 };
 
 export const StateContext = createContext<{
-  state: typeof initialState,
+  state: State,
   dispatch?: Dispatch<Action>,
 }>({
-  state: initialState,
+  state: getInitialState(),
   dispatch: undefined,
 });
 
@@ -78,27 +85,27 @@ export const StateProvider = ({ children }: { children: JSX.Element | JSX.Elemen
       newState.paused = action.payload;
       break
     case ActionType.START_GAME:
-      newState = {
-        currentTetromino: '',
-        highScore: 0,
-        level: 0,
-        linesCleared: 0,
-        lockedObjects: [],
-        nextTetromino: '',
-        paused: false,
-        score: 0,
-        started: true,
-      };
+      newState = getInitialState();
+      newState.started = true;
       break
     case ActionType.END_GAME:
       newState.started = false;
       newState.highScore = Math.max(oldState.highScore, oldState.score);
+      setCache({ highScore: newState.highScore });
+      break
+    case ActionType.TOGGLE_CAMERA:
+      if (newState.camera === 'perspective') {
+        newState.camera = 'orthographic';
+      } else {
+        newState.camera = 'perspective';
+      }
+      setCache({ camera: newState.camera });
       break
     default:
     }
     return newState;
   }, []);
-  const [state, dispatch] = useReducer(reducerFn, initialState);
+  const [state, dispatch] = useReducer(reducerFn, getInitialState());
   return (
     <Provider value={{ state, dispatch }}>
       {children}

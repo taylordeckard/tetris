@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from 'react';
+import { StateContext } from 'State';
 import { extend, Object3DNode, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls as OC } from 'three-stdlib';
 import { Vector3 } from 'three';
@@ -14,8 +15,21 @@ declare global {
 }
 
 export function OrbitControls () {
+  const { state } = useContext(StateContext);
   const controls = useRef<OC>();
   const { camera, gl } = useThree();
+  useEffect(() => {
+    if (controls.current) {
+      controls.current.target = new Vector3(0, 7.5, 0);
+      if (state.camera === 'perspective') {
+        camera.position.set(0, 7.5, 25);
+        camera.zoom = 1;
+      } else {
+        camera.position.set(0, 7.95, 10);
+        camera.zoom = 38;
+      }
+    }
+  }, [camera, state.camera]);
   useEffect(() => {
     if (controls.current) {
       controls.current.target = new Vector3(0, 7.5, 0);
