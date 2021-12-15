@@ -1,4 +1,5 @@
 export * from './ActivePiece'
+export * from './ColumnHighlight';
 export * from './Ground';
 export * from './Lighting';
 export * from './LockedPieces';

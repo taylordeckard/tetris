@@ -1,4 +1,5 @@
 import { ActivePiece } from './ActivePiece';
+import { ColumnHighlight } from './ColumnHighlight';
 import { StateContext } from 'State';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { LockedPieces } from './LockedPieces';
@@ -25,6 +26,7 @@ export function Playfield () {
             activePiece={activePiece}
             ref={handleActivePiece}
             onLock={piece => setLastLocked(piece)}/>
+          <ColumnHighlight activePiece={activePiece}/>
           <LockedPieces lastLocked={lastLocked} />
           <NextPiece />
         </>
