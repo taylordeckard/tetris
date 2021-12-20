@@ -36,6 +36,8 @@ export function useGravity (activePiece?: Object3D) {
     return [...(activePiece?.children ?? [])].some(mesh => {
       const mBox = new Box3();
       mBox.setFromObject(mesh);
+      console.log(1);
+      console.log(state.lockedObjects.length);
       return state.lockedObjects.some(obj => {
         const box = new Box3();
         box.setFromObject(obj);
@@ -51,6 +53,8 @@ export function useGravity (activePiece?: Object3D) {
 
   const movePieceDown = useCallback((forceY?: number, endGameCheck?: boolean) => {
     if (activePiece) {
+      console.log(0);
+      console.log(state.lockedObjects.length);
       activePiece.position.y = forceY ?? y;
       if (intersectsFloor() || intersectsLocked()) {
         activePiece.position.y = (forceY ?? y) + 1;

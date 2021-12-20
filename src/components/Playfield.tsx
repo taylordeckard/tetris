@@ -4,7 +4,7 @@ import { StateContext } from 'State';
 import { PlayfieldGrid } from './PlayfieldGrid';
 import { LockedPieces } from './LockedPieces';
 import { NextPiece } from './NextPiece';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Object3D } from 'three';
 
 export function Playfield () {
@@ -15,6 +15,12 @@ export function Playfield () {
   const handleActivePiece = useCallback((obj: Object3D) => {
     setActivePiece(obj);
   }, []);
+
+  useEffect(() => {
+    if (!state.started) {
+      setLastLocked(undefined);
+    }
+  }, [state]);
 
   return (
     <>

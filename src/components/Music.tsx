@@ -34,7 +34,7 @@ export function Music () {
       { getIcon() }
       <audio
         preload="auto"
-        src={`${process.env.PUBLIC_URL}/tetris.mp3`}
+      src={`${process?.env?.PUBLIC_URL ?? ''}/tetris.mp3`}
         ref={audioRef}
         loop></audio>
     </div>
