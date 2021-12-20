@@ -5,6 +5,7 @@ export * from './Lighting';
 export * from './LockedPieces';
 export * from './MobileButton';
 export * from './MobileControls';
+export * from './Music';
 export * from './NextPiece';
 export * from './OrbitControls';
 export * from './Paused';

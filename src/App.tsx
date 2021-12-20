@@ -1,7 +1,13 @@
 import { MobileView } from 'react-device-detect';
-import { ScoreDisplay, ThreeCanvas } from 'components';
+import {
+  ScoreDisplay,
+  ThreeCanvas,
+  Paused,
+  Title,
+  MobileControls,
+  Music,
+} from 'components';
 import { StateProvider } from 'State';
-import { Paused, Title, MobileControls } from 'components';
 
 function App() {
   return (
@@ -13,6 +19,7 @@ function App() {
       <MobileView>
         <MobileControls/>
       </MobileView>
+      <Music/>
     </StateProvider>
   );
 }
